@@ -1,0 +1,5 @@
+# Core dependencies
+numpy>=1.20.0
+
+# Optional dependencies for tree handling
+dendropy>=4.5.0
