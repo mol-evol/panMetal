@@ -79,6 +79,14 @@ python metal.py --help
 ### Output Format
 
 ```
+======================================================================
+panMetal v1.0 - MSA Distance Calculator
+https://github.com/mol-evol/panMetal/
+----------------------------------------------------------------------
+Implementation of algorithms from:
+Blackburne & Whelan (2012) Bioinformatics 28(4):495-502
+======================================================================
+
 Reading alignment 1: examples/alignment1.fasta
 Reading alignment 2: examples/alignment2.fasta
 
@@ -87,28 +95,13 @@ Calculating distances...
 dSSP: 0.083333
 dseq: 0.333333
 dpos: 0.333333
-devol: 0.333333
 ==================================================
+
+Please cite:
+- Blackburne & Whelan (2012) Bioinformatics 28(4):495-502
+- McInerney (2025) panMetal: https://github.com/mol-evol/panMetal/
 ```
 
-### Python API Usage
-
-```python
-from metal import MSAAlignment, MSADistanceCalculator, read_alignment
-
-# Read alignments from files
-alignment1 = read_alignment("alignment1.fasta")
-alignment2 = read_alignment("alignment2.fasta")
-
-# Calculate distances
-calculator = MSADistanceCalculator()
-distances = calculator.calculate_all_distances(alignment1, alignment2)
-
-# Access individual metrics
-print(f"dSSP: {distances['dSSP']:.4f}")
-print(f"dseq: {distances['dseq']:.4f}")
-print(f"dpos: {distances['dpos']:.4f}")
-```
 
 ## Distance Metrics Explained
 
@@ -157,40 +150,45 @@ optional arguments:
 
 ## Examples
 
-### Example 1: Comparing Similar Alignments
+The `examples/` directory contains test alignments and phylogenetic trees:
+- `alignment1.fasta`, `alignment2.fasta` - Small test alignments (3 sequences)
+- `example_tree.nwk` - Phylogenetic tree for the small alignments
+- `primate_align1.fasta`, `primate_align2.fasta` - Larger test alignments (12 primate sequences)
+- `primate_tree.nwk` - Phylogenetic tree for the primate alignments
 
-```python
-# Nearly identical alignments
-alignment1 = MSAAlignment(["ACGT", "ACGT", "ACGT"])
-alignment2 = MSAAlignment(["ACGT", "ACGT", "AC-T"])
+### Example 1: Basic Usage
 
-distances = calculator.calculate_all_distances(alignment1, alignment2)
-# All distances will be close to 0
+```bash
+# Compare two small alignments
+python metal.py -a1 examples/alignment1.fasta -a2 examples/alignment2.fasta
+
+# Output:
+# dSSP: 0.083333
+# dseq: 0.333333
+# dpos: 0.333333
 ```
 
-### Example 2: Comparing Different Gap Patterns
+### Example 2: Including Phylogenetic Tree
 
-```python
-# Different gap placements
-alignment1 = MSAAlignment(["A--CGT", "AC--GT", "ACGT--"])
-alignment2 = MSAAlignment(["--ACGT", "-AC-GT", "ACG--T"])
+```bash
+# Include tree for evolutionary distance (devol)
+python metal.py -a1 examples/alignment1.fasta -a2 examples/alignment2.fasta -t examples/example_tree.nwk
 
-distances = calculator.calculate_all_distances(alignment1, alignment2)
-# Gap-aware metrics (dseq, dpos) will show larger distances
+# Output includes all four metrics:
+# dSSP: 0.083333
+# dseq: 0.333333
+# dpos: 0.333333
+# devol: 0.333333
 ```
 
-### Example 3: Using Tree Files
+### Example 3: Larger Alignments
 
-```python
-# Load tree from file
-tree = dendropy.Tree.get(path="my_phylogeny.nwk", schema="newick")
+```bash
+# Compare primate alignments
+python metal.py -a1 examples/primate_align1.fasta -a2 examples/primate_align2.fasta -t examples/primate_tree.nwk
 
-# Ensure sequence names match tree taxa
-alignment1 = MSAAlignment(sequences1, tree_taxa_names)
-alignment2 = MSAAlignment(sequences2, tree_taxa_names)
-
-# Calculate with evolutionary information
-distances = calculator.calculate_all_distances(alignment1, alignment2, tree)
+# Calculate specific metrics only
+python metal.py -a1 examples/primate_align1.fasta -a2 examples/primate_align2.fasta -m dSSP dseq
 ```
 
 ## File Formats
@@ -221,19 +219,11 @@ Example Newick tree:
 
 ## Testing
 
-The project includes a comprehensive test suite:
+Basic tests are included:
 
 ```bash
-# Run all tests
-python -m unittest discover
-
-# Run specific test modules
-python -m unittest test_metal.py         # Core functionality tests
-python -m unittest test_tree_handler.py  # Tree handling tests (requires DendroPy)
-python -m unittest test_integration.py   # Integration tests with examples
-
-# Run doctests
-python -m doctest metal.py
+# Run tests
+python test.py
 ```
 
 ## Contributing
