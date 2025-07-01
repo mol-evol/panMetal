@@ -30,10 +30,9 @@ panMetal provides tools to compare Multiple Sequence Alignments (MSAs) using fou
 
 - Four complementary distance metrics for comprehensive alignment comparison
 - Support for phylogenetic tree input with proper Dollo parsimony (via DendroPy)
-- Flexible input formats (edge dictionaries or tree objects)
+- Command-line interface with FASTA alignment input
 - Pure Python implementation with minimal dependencies
-- Comprehensive test suite with 40+ tests
-- Example files included (example_tree.nwk)
+- Example alignments and trees included
 
 ## Installation
 
@@ -41,8 +40,8 @@ panMetal provides tools to compare Multiple Sequence Alignments (MSAs) using fou
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/MetAL.git
-cd MetAL
+git clone https://github.com/mol-evol/panMetal.git
+cd panMetal
 
 # Basic usage (no additional dependencies required)
 python metal.py
@@ -142,7 +141,7 @@ optional arguments:
                         Second alignment file
   -t TREE, --tree TREE  Phylogenetic tree file (Newick format) for devol metric
   -f FORMAT, --format FORMAT
-                        Alignment format (default: fasta)
+                        Alignment format (currently only 'fasta' supported)
   -m METRICS, --metrics METRICS
                         Metrics to calculate (default: all)
   --cite                Show citation information
@@ -194,15 +193,14 @@ python metal.py -a1 examples/primate_align1.fasta -a2 examples/primate_align2.fa
 ## File Formats
 
 ### Input Alignments
-- Simple list of strings format
-- Each string represents one sequence
+- FASTA format only
 - Gaps represented as '-'
 - All sequences must have equal length
+- Both alignments must have the same sequences
 
-### Tree Formats (via DendroPy)
-- Newick format (.nwk, .tree)
-- NEXUS format (.nex, .nexus)
-- PhyloXML format (.xml)
+### Tree Format
+- Newick format (.nwk files)
+- Taxa names in tree must match sequence names in alignments
 
 Example Newick tree:
 ```
